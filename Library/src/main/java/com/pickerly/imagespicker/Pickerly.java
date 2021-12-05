@@ -94,8 +94,7 @@ public class Pickerly extends BottomSheetDialogFragment {
 
                     @Override
                     public void onPicSelected(String path) {
-                        Toast.makeText(requireContext(), "selected " + path, Toast.LENGTH_LONG)
-                                .show();
+                        
                         if (!MULTI_SELECT) {
                             listener.onItemSelected(path);
                             dismiss();
@@ -105,8 +104,7 @@ public class Pickerly extends BottomSheetDialogFragment {
                     @Override
                     public void onMultiplePicSelected(String[] paths) {
                         if (MULTI_SELECT) {
-                            Toast.makeText(requireContext(), "selected " + Arrays.toString(paths), Toast.LENGTH_LONG)
-                                    .show();
+                            
                             MULTI_PATHS = paths;
                             if (paths.length <= 0) {
                                 fab.setVisibility(View.GONE);
