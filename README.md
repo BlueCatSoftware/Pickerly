@@ -45,7 +45,7 @@ Version: [![](https://jitpack.io/v/BlueCatSoftware/Pickerly.svg)](https://jitpac
 Pickerly pick = new Pickerly();
 
 //Whether to enable transparency
-pick.enableTransparency(false);
+pick.enableTransparency(true);
 
 //For Dynamic Height
 pick.enableHeight(true);
