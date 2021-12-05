@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="A simple photo picker Library written with code assist Version 2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+		android:id="@+id/textview1" />
+	<com.google.android.material.button.MaterialButton
+			android:id="@+id/materialbutton1"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:padding="8dp"
+			android:layout_margin="8dp"
+			android:gravity="center_horizontal|center_vertical"
+			android:text="Pick "
+			android:textSize="12sp"
+			android:textColor="#FFFFFF"
+			android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+			app:backgroundTint="@color/purple_700"
+			app:cornerRadius="8dp"
+			style="@style/Widget.MaterialComponents.Button" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
