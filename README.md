@@ -69,7 +69,7 @@ pick.setItemListener(new Pickerly.ItemSelectedListener() {
    });
 
 //Finally, show the imagePickerDialog
-bottom.show(getSupportFragmentManager(), "0");
+pick.show(getSupportFragmentManager(), "0");
 ```
 
 ## Co-Dev
