@@ -25,8 +25,7 @@ Step 2. Add the dependency
 ```
 
 Latest
-Version: [![](https://jitpack.io/v/BlueCatSoftware/Pickerly.svg)](https://jitpack.io/#BlueCatSoftware/BottomPics)
-
+Version: [![](https://jitpack.io/v/BlueCatSoftware/Pickerly.svg)](https://jitpack.io/#BlueCatSoftware/Pickerly)
 ## Features
 
 - Ability to single select
