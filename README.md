@@ -72,7 +72,7 @@ pick.setItemListener(new Pickerly.ItemSelectedListener() {
 pick.show(getSupportFragmentManager(), "0");
 ```
 
-## Co-Dev
-- Ilyasse Salama
+
 ## Special Thanks
+- Ilyasse Salama
 - khaled-0
