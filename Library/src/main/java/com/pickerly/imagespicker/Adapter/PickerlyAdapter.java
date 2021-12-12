@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import androidx.recyclerview.widget.RecyclerView;
-import com.pickerly.imagespicker.R;
 import com.bumptech.glide.Glide;
+import com.pickerly.imagespicker.R;
 import java.util.ArrayList;
 
 public class PickerlyAdapter extends RecyclerView.Adapter<PickerlyAdapter.ViewHolder> {
@@ -26,6 +26,7 @@ public class PickerlyAdapter extends RecyclerView.Adapter<PickerlyAdapter.ViewHo
     private RelativeLayout bg;
     private ArrayList<String> multiSelectedPaths = new ArrayList<String>();
     private boolean singleSelect;
+    private boolean selectionMode;
 
     // data is passed into the constructor
     public PickerlyAdapter(Context context, ArrayList<String> data) {
@@ -92,8 +93,28 @@ public class PickerlyAdapter extends RecyclerView.Adapter<PickerlyAdapter.ViewHo
 
                     @Override
                     public void onClick(View arg0) {
+
                         if (singleSelect) {
                             listener.onPicSelected(mData.get(position));
+                        }
+                        if (!singleSelect) {
+                            if (multiSelectedPaths.contains(mData.get(position))) {
+                                multiSelectedPaths.remove(mData.get(position));
+                                shadow.setVisibility(View.GONE);
+                                shadow.setAlpha(1.0f);
+                                String[] data =
+                                        multiSelectedPaths.toArray(
+                                                new String[multiSelectedPaths.size()]);
+                                listener.onMultiplePicSelected(data);
+                            } else {
+                                shadow.setAlpha(0.5f);
+                                shadow.setVisibility(View.VISIBLE);
+                                multiSelectedPaths.add(mData.get(position));
+                                String[] data =
+                                        multiSelectedPaths.toArray(
+                                                new String[multiSelectedPaths.size()]);
+                                listener.onMultiplePicSelected(data);
+                            }
                         }
                     }
                 });
@@ -102,15 +123,16 @@ public class PickerlyAdapter extends RecyclerView.Adapter<PickerlyAdapter.ViewHo
 
                     @Override
                     public boolean onLongClick(View arg0) {
+
                         if (!singleSelect) {
                             if (multiSelectedPaths.contains(mData.get(position))) {
                                 multiSelectedPaths.remove(mData.get(position));
                                 shadow.setVisibility(View.GONE);
                                 shadow.setAlpha(1.0f);
-								String[] data =
+                                String[] data =
                                         multiSelectedPaths.toArray(
                                                 new String[multiSelectedPaths.size()]);
-								listener.onMultiplePicSelected(data);
+                                listener.onMultiplePicSelected(data);
                             } else {
                                 shadow.setAlpha(0.5f);
                                 shadow.setVisibility(View.VISIBLE);
