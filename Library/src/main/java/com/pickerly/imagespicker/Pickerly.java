@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images.ImageColumns;
 import android.provider.MediaStore.MediaColumns;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -30,9 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.ListPopupWindow;
@@ -48,8 +45,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pickerly.imagespicker.Adapter.PickerlyAdapter;
 import com.pickerly.imagespicker.Tools.Utility;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -147,7 +144,7 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
                         showDropDown();
                     }
                 });
-		spinner.setOnClickListener(
+        spinner.setOnClickListener(
                 new View.OnClickListener() {
 
                     @Override
@@ -243,7 +240,7 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
         fab = view.findViewById(R.id.fab);
         album_bg = view.findViewById(R.id.drop_down);
         drop_text = view.findViewById(R.id.drop_text);
-		spinner = view.findViewById(R.id.spin);
+        spinner = view.findViewById(R.id.spin);
     }
 
     /**
@@ -381,50 +378,51 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
     }
 
     public ArrayList<String> getAllBuckets() {
-        ArrayList<String> str = new ArrayList<String>();
-        // which image properties are we querying
-        String[] PROJECTION_BUCKET = {
-            ImageColumns.BUCKET_ID,
-            ImageColumns.BUCKET_DISPLAY_NAME,
-            ImageColumns.DATE_TAKEN,
-            ImageColumns.DATA
-        };
-        String BUCKET_GROUP_BY = "1) GROUP BY 1,(2";
-        String BUCKET_ORDER_BY = "MAX(datetaken) DESC";
 
+		HashSet<String> hs = new HashSet<String>();
+        
+        String[] projection =
+                new String[] {
+                    MediaStore.Images.Media._ID,
+                    MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+                    MediaStore.Images.Media.DATE_TAKEN
+                };
+
+        
         Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
 
+        
         Cursor cur =
-                getActivity()
+                requireContext()
                         .getContentResolver()
-                        .query(images, PROJECTION_BUCKET, BUCKET_GROUP_BY, null, BUCKET_ORDER_BY);
+                        .query(
+                                images,
+                                projection, 
+                                null, 
+                                null, 
+                                null
+                                );
 
-        // Log.i("ListingImages"," query count=" + cur.getCount());
+        Log.i("ListingImages", " query count=" + cur.getCount());
 
         if (cur.moveToFirst()) {
             String bucket;
             String date;
-            String data;
             int bucketColumn = cur.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
 
             int dateColumn = cur.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
-            int dataColumn = cur.getColumnIndex(MediaStore.Images.Media.DATA);
 
             do {
-                // Get the field values
                 bucket = cur.getString(bucketColumn);
                 date = cur.getString(dateColumn);
-                data = cur.getString(dataColumn);
-
-                // textview1.setText(textview1.getText().toString() + "\n \n" + bucket + "=bucket "
-                // +date+ "=date" + data +"=data");
-                str.add(bucket);
-                // Do something with the values.
-                Log.i(
-                        "ListingImages",
-                        " bucket=" + bucket + "  date_taken=" + date + "  _data=" + data);
+				hs.add(bucket);
+                
+                Log.i("ListingImages", " bucket=" + bucket + "  date_taken=" + date);
             } while (cur.moveToNext());
         }
+		
+		ArrayList<String> str = new ArrayList<String>(hs);
+		
 
         return str;
     }
