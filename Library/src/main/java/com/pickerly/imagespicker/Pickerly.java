@@ -5,7 +5,6 @@ import static android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACK
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -26,7 +25,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,6 +52,7 @@ import java.util.concurrent.Executors;
 public class Pickerly extends BottomSheetDialogFragment implements OnItemClickListener {
 
     private RecyclerView gridView;
+    private View view;
     private ListPopupWindow listPopupWindow;
     private RelativeLayout album_bg;
     private TextView drop_text;
@@ -63,9 +62,10 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
     private FloatingActionButton fab;
     private PickerlyAdapter adapter;
     private int numberOfColumns;
-    private ItemSelectedListener listener;
+    private selectListener listener;
+    private multiSelectListener listener2;
     private Boolean ENABLE_TRANSPARENCY = false;
-    private int BOTTOMSHEETHEIGHT = 40;
+    private int BOTTOMSHEETHEIGHT = 400;
     private boolean ENABLE_HEIGHT;
     private BottomSheetBehavior<View> sheetBehavior;
     private boolean MULTI_SELECT;
@@ -78,15 +78,18 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
             @NonNull LayoutInflater inflater,
             @Nullable ViewGroup container,
             @Nullable final Bundle savedInstanceState) {
+        View _view = inflater.inflate(R.layout.pickerly_fragment, container, false);
         Objects.requireNonNull(getDialog())
                 .setOnShowListener(
                         dialog -> {
                             BottomSheetDialog d = (BottomSheetDialog) dialog;
-                            View view =
+                            view =
                                     d.findViewById(
                                             com.google.android.material.R.id.design_bottom_sheet);
+
                             assert view != null;
                             sheetBehavior = BottomSheetBehavior.from(view);
+
                             findViews(view, savedInstanceState);
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                 getDialog()
@@ -98,8 +101,7 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
                             }
                             initializeLogic();
                         });
-
-        return inflater.inflate(R.layout.pickerly_fragment, container, false);
+        return _view;
     }
 
     public void initializeListeners() {
@@ -131,7 +133,7 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
         fab.setOnClickListener(
                 arg0 -> {
                     if (MULTI_PATHS.length >= 1) {
-                        listener.onMultiItemSelected(MULTI_PATHS);
+                        listener2.onMultiItemSelected(MULTI_PATHS);
                     }
                     dismiss();
                 });
@@ -155,6 +157,11 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
     }
 
     private void initializeLogic() {
+        if (ENABLE_HEIGHT) {
+            ViewGroup.LayoutParams layoutParams = getView().getLayoutParams();
+            layoutParams.height = BOTTOMSHEETHEIGHT * 3;
+            getView().setLayoutParams(layoutParams);
+        }
         // registerForContextMenu(albumTextView);
         numberOfColumns = Utility.calculateNoOfColumns(requireContext(), 100);
         gridView.addItemDecoration(new Utility.ImagesPickerItemDecoration(7, numberOfColumns));
@@ -378,52 +385,32 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
     }
 
     public ArrayList<String> getAllBuckets() {
-
-		HashSet<String> hs = new HashSet<String>();
-        
+        HashSet<String> hs = new HashSet<String>();
         String[] projection =
                 new String[] {
                     MediaStore.Images.Media._ID,
                     MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
                     MediaStore.Images.Media.DATE_TAKEN
                 };
-
-        
         Uri images = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-
-        
         Cursor cur =
-                requireContext()
-                        .getContentResolver()
-                        .query(
-                                images,
-                                projection, 
-                                null, 
-                                null, 
-                                null
-                                );
-
+                requireContext().getContentResolver().query(images, projection, null, null, null);
         Log.i("ListingImages", " query count=" + cur.getCount());
-
         if (cur.moveToFirst()) {
             String bucket;
             String date;
             int bucketColumn = cur.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME);
-
             int dateColumn = cur.getColumnIndex(MediaStore.Images.Media.DATE_TAKEN);
 
             do {
                 bucket = cur.getString(bucketColumn);
                 date = cur.getString(dateColumn);
-				hs.add(bucket);
-                
+                hs.add(bucket);
+
                 Log.i("ListingImages", " bucket=" + bucket + "  date_taken=" + date);
             } while (cur.moveToNext());
         }
-		
-		ArrayList<String> str = new ArrayList<String>(hs);
-		
-
+        ArrayList<String> str = new ArrayList<String>(hs);
         return str;
     }
 
@@ -431,34 +418,12 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
         this.ENABLE_TRANSPARENCY = bool;
     }
 
-    public void setItemListener(ItemSelectedListener listener) {
+    public void setItemListener(selectListener listener) {
         this.listener = listener;
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.setOnShowListener(
-                dialogInterface -> {
-                    if (ENABLE_HEIGHT) {
-                        BottomSheetDialog bottomSheetDialog = (BottomSheetDialog) dialogInterface;
-                        setupRatio(bottomSheetDialog);
-                    }
-                });
-        return dialog;
-    }
-
-    private void setupRatio(BottomSheetDialog bottomSheetDialog) {
-        // id = com.google.android.material.R.id.design_bottom_sheet for Material Components
-        // id = android.support.design.R.id.design_bottom_sheet for support librares
-        FrameLayout bottomSheet = bottomSheetDialog.findViewById(R.id.design_bottom_sheet);
-        BottomSheetBehavior<View> behavior =
-                BottomSheetBehavior.from(Objects.requireNonNull(bottomSheet));
-        ViewGroup.LayoutParams layoutParams = bottomSheet.getLayoutParams();
-        layoutParams.height = getBottomSheetDialogDefaultHeight();
-        bottomSheet.setLayoutParams(layoutParams);
-        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+    public void setItemListener(multiSelectListener listener) {
+        this.listener2 = listener;
     }
 
     private int getBottomSheetDialogDefaultHeight() {
@@ -466,7 +431,6 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
     }
 
     private int getWindowHeight() {
-        // Calculate window height for fullscreen use
         DisplayMetrics displayMetrics = new DisplayMetrics();
         ((Activity) requireContext())
                 .getWindowManager()
@@ -476,7 +440,7 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
     }
 
     public void setHeightPercent(int value) {
-        BOTTOMSHEETHEIGHT = value;
+        this.BOTTOMSHEETHEIGHT = value;
     }
 
     public void enableHeight(boolean value) {
@@ -491,9 +455,11 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
         return bg;
     }
 
-    public interface ItemSelectedListener {
+    public interface selectListener {
         public void onItemSelected(String item);
+    }
 
+    public interface multiSelectListener {
         public void onMultiItemSelected(String[] items);
     }
 
