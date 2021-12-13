@@ -20,11 +20,11 @@ Step 2. Add the dependency
 
 ```
 	dependencies {
-                implementation 'com.github.BlueCatSoftware:Pickerly:Tag'
+                implementation 'com.github.BlueCatSoftware:Pickerly:<version>'
 	}
 ```
 
-Latest
+### Latest
 Version: [![](https://jitpack.io/v/BlueCatSoftware/Pickerly.svg)](https://jitpack.io/#BlueCatSoftware/Pickerly)
 ## Features
 
