@@ -48,14 +48,15 @@ Pickerly pick = new Pickerly();
 pick.enableTransparency(true);
 
 //For Dynamic Height
-pick.enableHeight(true);
-pick.setHeightPercent(40);
+  pick.enableHeight(false);
+// Set height if it's enable
+pick.setHeightPercent(400);
 
 //Toggling Multiple Selection On Or Off
 pick.enableMultiSelect(false); 
 
 //Listeners after selecting
-pick.setItemListener(new Pickerly.ItemSelectedListener() {
+pick.setItemListener(new Pickerly.selectListener() {
 
    @Override
    public void onItemSelected(String item) {
