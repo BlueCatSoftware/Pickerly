@@ -62,11 +62,13 @@ pick.setItemListener(new Pickerly.ItemSelectedListener() {
       //Do something with the selected file path
      }
    });
-*Or if you enable Multiple Selection use this listener*
-bottom.setItemListener(new Pickerly.multiSelectListener() {
+
+//Or if you enable Multiple Selection use this listener
+
+pick.setItemListener(new Pickerly.multiSelectListener() {
    @Override
    public void onMultiItemSelected(String[] items) {
-   				
+       //Do something with the arrays of selected paths		
      }
    });
 
