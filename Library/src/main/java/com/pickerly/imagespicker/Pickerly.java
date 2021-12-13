@@ -120,7 +120,7 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
                     @Override
                     public void onMultiplePicSelected(String[] paths) {
                         if (MULTI_SELECT) {
-                            MULTI_PATHS = paths;
+                            MULTI_PATHS = paths ;
                             if (paths.length <= 0) {
                                 fab.setVisibility(View.GONE);
 
@@ -316,7 +316,9 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
                 new ArrayAdapter(getContext(), R.layout.albums_popup, bucketList));
         listPopupWindow.setAnchorView(album_bg);
         listPopupWindow.setWidth(400);
-        //  listPopupWindow.setHeight(View.);
+		if(ENABLE_HEIGHT){
+        listPopupWindow.setHeight(BOTTOMSHEETHEIGHT*2);
+		}
         listPopupWindow.setModal(false);
         listPopupWindow.setOverlapAnchor(true);
         listPopupWindow.setOnItemClickListener(this);
