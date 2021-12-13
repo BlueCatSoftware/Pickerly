@@ -76,15 +76,16 @@ public class PickerlyAdapter extends RecyclerView.Adapter<PickerlyAdapter.ViewHo
                 .useAnimationPool(true)
                 .into(iconPic);
         shadow.setVisibility(View.GONE);
+        check.setVisibility(View.GONE);
 
         if (multiSelectedPaths.contains(mData.get(position))) {
-            iconPic.setAlpha(0.5f);
+
             // check.setAlpha(1.0f);
             shadow.setVisibility(View.VISIBLE);
+            check.setVisibility(View.VISIBLE);
         } else {
+            check.setVisibility(View.GONE);
             shadow.setVisibility(View.GONE);
-            iconPic.setAlpha(1.0f);
-            // check.setAlpha(1.0f);
         }
 
         // selection listeners
@@ -101,6 +102,7 @@ public class PickerlyAdapter extends RecyclerView.Adapter<PickerlyAdapter.ViewHo
                             if (multiSelectedPaths.contains(mData.get(position))) {
                                 multiSelectedPaths.remove(mData.get(position));
                                 shadow.setVisibility(View.GONE);
+                                check.setVisibility(View.GONE);
                                 shadow.setAlpha(1.0f);
                                 String[] data =
                                         multiSelectedPaths.toArray(
@@ -109,6 +111,7 @@ public class PickerlyAdapter extends RecyclerView.Adapter<PickerlyAdapter.ViewHo
                             } else {
                                 shadow.setAlpha(0.5f);
                                 shadow.setVisibility(View.VISIBLE);
+                                check.setVisibility(View.VISIBLE);
                                 multiSelectedPaths.add(mData.get(position));
                                 String[] data =
                                         multiSelectedPaths.toArray(
@@ -116,34 +119,6 @@ public class PickerlyAdapter extends RecyclerView.Adapter<PickerlyAdapter.ViewHo
                                 listener.onMultiplePicSelected(data);
                             }
                         }
-                    }
-                });
-        back.setOnLongClickListener(
-                new View.OnLongClickListener() {
-
-                    @Override
-                    public boolean onLongClick(View arg0) {
-
-                        if (!singleSelect) {
-                            if (multiSelectedPaths.contains(mData.get(position))) {
-                                multiSelectedPaths.remove(mData.get(position));
-                                shadow.setVisibility(View.GONE);
-                                shadow.setAlpha(1.0f);
-                                String[] data =
-                                        multiSelectedPaths.toArray(
-                                                new String[multiSelectedPaths.size()]);
-                                listener.onMultiplePicSelected(data);
-                            } else {
-                                shadow.setAlpha(0.5f);
-                                shadow.setVisibility(View.VISIBLE);
-                                multiSelectedPaths.add(mData.get(position));
-                                String[] data =
-                                        multiSelectedPaths.toArray(
-                                                new String[multiSelectedPaths.size()]);
-                                listener.onMultiplePicSelected(data);
-                            }
-                        }
-                        return false;
                     }
                 });
     }
