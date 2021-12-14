@@ -9,20 +9,20 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView textview1;
-    private MaterialButton button;
+    private TextView tv_selected_picture_list;
+    private MaterialButton btn_pick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-		initLogic();
+		    initLogic();
     }
 
     public void initLogic() {
-        textview1 = findViewById(R.id.textview1);
-        button = findViewById(R.id.materialbutton1);
-        button.setOnClickListener(
+        tv_selected_picture_list = findViewById(R.id.textview1);
+        btn_pick = findViewById(R.id.materialbutton1);
+        btn_pick.setOnClickListener(
                 view -> {
                     FragmentManager fm = getSupportFragmentManager();
                     Pickerly bottom = new Pickerly();
@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onMultiItemSelected(String[] items) {
-                                    textview1.setText("");
+                                    tv_selected_picture_list.setText("");
                                     for (String item : items) {
-                                        textview1.setText(
-                                                textview1.getText().toString() + "\n" + item);
+                                        tv_selected_picture_list.setText(
+                                                tv_selected_picture_list.getText().toString() + "\n" + item);
                                     }
                                 }
                             });
