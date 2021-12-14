@@ -23,40 +23,26 @@ public class MainActivity extends AppCompatActivity {
         textview1 = findViewById(R.id.textview1);
         button = findViewById(R.id.materialbutton1);
         button.setOnClickListener(
-                new View.OnClickListener() {
-					
-                    @Override
-                    public void onClick(View view) {
-                        FragmentManager fm = getSupportFragmentManager();
-                        Pickerly bottom = new Pickerly();
-                        bottom.show(fm, "0");
-                        bottom.enableTransparency(true);
-                        bottom.enableHeight(true);
-                        bottom.setHeightPercent(40);
-                        bottom.enableMultiSelect(true);
-                        bottom.setItemListener(
-                                new Pickerly.ItemSelectedListener() {
+                view -> {
+                    FragmentManager fm = getSupportFragmentManager();
+                    Pickerly bottom = new Pickerly();
+                    bottom.enableTransparency(true);
+                    bottom.enableHeight(false);
+                    bottom.setHeightPercent(300);
+                    bottom.enableMultiSelect(true);
+                    bottom.setItemListener(
+                            new Pickerly.multiSelectListener() {
 
-                                    @Override
-                                    public void onItemSelected(String item) {
-                                        // Toast.makeText(MainActivity.this, "selected " + item,
-                                        // Toast.LENGTH_LONG).show();
-                                        textview1.setText(item);
+                                @Override
+                                public void onMultiItemSelected(String[] items) {
+                                    textview1.setText("");
+                                    for (String item : items) {
+                                        textview1.setText(
+                                                textview1.getText().toString() + "\n" + item);
                                     }
-
-                                    @Override
-                                    public void onMultiItemSelected(String[] items) {
-                                        textview1.setText("");
-                                        for (String item : items) {
-                                            textview1.setText(
-                                                    textview1.getText().toString()
-                                                            + "\n\n"
-                                                            + ". "
-                                                            + item);
-                                        }
-                                    }
-                                });
-                    }
+                                }
+                            });
+                    bottom.show(fm, "0");
                 });
     }
 }
