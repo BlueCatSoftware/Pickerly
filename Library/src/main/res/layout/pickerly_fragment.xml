@@ -4,69 +4,36 @@
     android:id="@+id/linear1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/relativeLayout2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.cardview.widget.CardView
             android:layout_width="40dp"
             android:layout_height="4dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="4dp"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="#eeeeee"
             android:orientation="vertical"
             app:cardCornerRadius="50dp"
-            app:cardElevation="2dp" >
-        </androidx.cardview.widget.CardView>
+            app:cardElevation="2dp" />
 
-        <RelativeLayout
-            android:id="@+id/drop_down"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="18dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingBottom="4dp"
-            android:paddingTop="4dp" >
-
-            <TextView
-                android:id="@+id/drop_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="18dp"
-                android:text="All images"
-                android:textColor="#000000"
-                android:textSize="16sp" />
-
-            <LinearLayout
-                android:id="@+id/spin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_toRightOf="@+id/drop_text" >
-
-                <Spinner
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </LinearLayout>
-        </RelativeLayout>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/drop_down"
             android:layout_marginLeft="0dp"
             android:layout_marginRight="0dp"
             android:orientation="vertical"
-            app:cardCornerRadius="15dp" >
+            app:cardCornerRadius="15dp">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerview1"
@@ -75,16 +42,69 @@
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
+    <LinearLayout
+        android:id="@+id/control_panel"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="30dp"
+        android:animateLayoutChanges="true"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:backgroundTint="#2193F6"
-        app:shapeAppearanceOverlay="@style/fab_square"
-        app:srcCompat="@drawable/ic_check"
-        app:tint="@android:color/white" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/drop_down"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="#DB000000"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="10dp">
+
+            <TextView
+                android:id="@+id/drop_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="18dp"
+                android:text="All images"
+                android:textColor="#FFF"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/spin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#FFF" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/confirm_selection_holder"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:visibility="gone"
+            android:background="#DB000000"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="10dp"
+                android:src="@drawable/ic_check" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="Confirm"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

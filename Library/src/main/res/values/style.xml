@@ -1,5 +1,4 @@
 <resources>
-    <!--sheet style-->
     <style name="CustomBottomSheetDialogTheme" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/CustomBottomSheet</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
@@ -17,10 +16,18 @@
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
-		
-	<style name="fab_square" parent="">
+
+    <style name="fab_square" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">15dp</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
+        <item name="snackbarStyle">@style/MySnackbar</item>
+    </style>
+
+    <style name="MySnackbar" parent="@style/Widget.MaterialComponents.Snackbar">
+        <item name="android:layout_margin">32dp</item>
     </style>
 
 </resources>
