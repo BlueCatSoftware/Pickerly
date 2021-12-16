@@ -60,7 +60,7 @@ pick.setItemListener(new Pickerly.selectListener() {
 
    @Override
    public void onItemSelected(String item) {
-      //Do something with the selected file path
+      //Do something with the file path selected
      }
    });
 
