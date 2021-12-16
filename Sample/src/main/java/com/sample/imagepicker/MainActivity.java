@@ -9,40 +9,54 @@ import androidx.fragment.app.FragmentManager;
 import com.google.android.material.button.MaterialButton;
 
 public class MainActivity extends AppCompatActivity {
-    private TextView tv_selected_picture_list;
-    private MaterialButton btn_pick;
+    private TextView textview1;
+    private MaterialButton button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-		    initLogic();
+		initLogic();
     }
 
     public void initLogic() {
-        tv_selected_picture_list = findViewById(R.id.textview1);
-        btn_pick = findViewById(R.id.materialbutton1);
-        btn_pick.setOnClickListener(
-                view -> {
-                    FragmentManager fm = getSupportFragmentManager();
-                    Pickerly bottom = new Pickerly();
-                    bottom.enableTransparency(true);
-                    bottom.enableHeight(false);
-                    bottom.setHeightPercent(300);
-                    bottom.enableMultiSelect(true);
-                    bottom.setItemListener(
-                            new Pickerly.multiSelectListener() {
+        textview1 = findViewById(R.id.textview1);
+        button = findViewById(R.id.materialbutton1);
+        button.setOnClickListener(
+                new View.OnClickListener() {
+					
+                    @Override
+                    public void onClick(View view) {
+                        FragmentManager fm = getSupportFragmentManager();
+                        Pickerly bottom = new Pickerly();
+                        bottom.show(fm, "0");
+                        bottom.enableTransparency(true);
+                        bottom.enableHeight(true);
+                        bottom.setHeightPercent(40);
+                        bottom.enableMultiSelect(true);
+                        bottom.setItemListener(
+                                new Pickerly.ItemSelectedListener() {
 
-                                @Override
-                                public void onMultiItemSelected(String[] items) {
-                                    tv_selected_picture_list.setText("");
-                                    for (String item : items) {
-                                        tv_selected_picture_list.setText(
-                                                tv_selected_picture_list.getText().toString() + "\n" + item);
+                                    @Override
+                                    public void onItemSelected(String item) {
+                                        // Toast.makeText(MainActivity.this, "selected " + item,
+                                        // Toast.LENGTH_LONG).show();
+                                        textview1.setText(item);
                                     }
-                                }
-                            });
-                    bottom.show(fm, "0");
+
+                                    @Override
+                                    public void onMultiItemSelected(String[] items) {
+                                        textview1.setText("");
+                                        for (String item : items) {
+                                            textview1.setText(
+                                                    textview1.getText().toString()
+                                                            + "\n\n"
+                                                            + ". "
+                                                            + item);
+                                        }
+                                    }
+                                });
+                    }
                 });
     }
 }
