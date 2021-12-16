@@ -5,6 +5,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 repositories {
     mavenCentral()
     google()
+    jcenter()
     maven { url 'https://jitpack.io' }
 }
 android {
