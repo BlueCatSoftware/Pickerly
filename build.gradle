@@ -5,7 +5,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.4'
+        classpath 'com.android.tools.build:gradle:6.9'
         //idk wtf this ain't working, so i'll leave it commented out.
         //classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
