@@ -1,5 +1,6 @@
 package com.pickerly.imagespicker;
 
+import android.view.MotionEvent;
 import static android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
 import static android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
 
@@ -143,6 +144,15 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
         });
 
         album_bg.setOnClickListener(arg0 -> showDropDown());
+	spinner.setOnTouchListener(new View.OnTouchListener() {
+          @Override
+           public boolean onTouch(View v, MotionEvent event) {
+              if (event.getAction() == MotionEvent.ACTION_UP) {
+               showDropDown();
+              }
+               return false;
+           }
+        });
     }
 
     private void initializeLogic() {
@@ -153,7 +163,7 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
             layoutParams.height = BOTTOMSHEETHEIGHT * 3;
             requireView().setLayoutParams(layoutParams);
         }
-        // registerForContextMenu(albumTextView);
+ 
         numberOfColumns = Utility.calculateNoOfColumns(requireContext(), 100);
         gridView.addItemDecoration(new Utility.ImagesPickerItemDecoration(7, numberOfColumns));
         gridView.setLayoutManager(new GridLayoutManager(getContext(), numberOfColumns));
@@ -227,16 +237,9 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
         spinner = view.findViewById(R.id.spin);
     }
 
-    /**
-     * Getting All Images Path
-     *
-     * @return ArrayList with images Path
-     */
     @Override
     public void onDismiss(@NonNull DialogInterface arg0) {
         super.onDismiss(arg0);
-
-        // listener.onMultiItemSelected(MULTI_PATHS);
     }
 
     public ArrayList<String> getAllShownImagesPath() {
@@ -310,10 +313,14 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
             ExecutorService executor = Executors.newSingleThreadExecutor();
             Handler handler = new Handler(Looper.getMainLooper());
             executor.execute(() -> {
-                contentUri = getAllShownImagesPath(bucketList.get(position));
+                ArrayList<String> content = getAllShownImagesPath(bucketList.get(position));
                 handler.post(() -> {
-                    Collections.reverse(contentUri);
-                    adapter = new PickerlyAdapter(getContext(), contentUri);
+					Collections.reverse(content);
+					contentUri.clear();
+					for(String path : content){
+						contentUri.add(path);
+					}
+					adapter.notifyDataSetChanged();
                     if (MULTI_SELECT) {
                         if (MULTI_PATHS.length == 0) {
                             confirm_selection_holder.setVisibility(View.GONE);
@@ -325,7 +332,6 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
                         confirm_selection_holder.setVisibility(View.GONE);
                         adapter.singleSelect(true);
                     }
-                    gridView.setAdapter(adapter);
                     initializeListeners();
                 });
             });
@@ -334,10 +340,14 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
             Handler handler = new Handler(Looper.getMainLooper());
 
             executor.execute(() -> {
-                contentUri = getAllShownImagesPath();
+                ArrayList<String> content = getAllShownImagesPath();
                 handler.post(() -> {
-                    Collections.reverse(contentUri);
-                    adapter = new PickerlyAdapter(getContext(), contentUri);
+					Collections.reverse(content);
+					contentUri.clear();
+					for(String path : content){
+						contentUri.add(path);
+					}
+					adapter.notifyDataSetChanged();
                     if (MULTI_SELECT) {
                         if (MULTI_PATHS.length == 0) {
                             confirm_selection_holder.setVisibility(View.GONE);
@@ -349,7 +359,6 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
                         confirm_selection_holder.setVisibility(View.GONE);
                         adapter.singleSelect(true);
                     }
-                    gridView.setAdapter(adapter);
                     initializeListeners();
                 });
             });
@@ -436,8 +445,6 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
 
     public interface selectListener {
         void onItemSelected(String item);
-
-        void onMultiItemSelected(String[] items);
     }
 
     public interface multiSelectListener {
