@@ -39,10 +39,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onItemSelected(String item) {
                     textview1.setText(item);
                 }
-
-                @Override
-                public void onMultiItemSelected(String[] items) {
-                }
             });
         });
         pick_multiple.setOnClickListener(view -> {
@@ -53,19 +49,15 @@ public class MainActivity extends AppCompatActivity {
             bottom.enableHeight(false);
             //bottom.setHeightPercent(40);
             bottom.enableMultiSelect(true);
-            bottom.setItemListener(new Pickerly.selectListener() {
-                @Override
-                public void onItemSelected(String item) {
-                }
-
-                @SuppressLint("SetTextI18n")
-                @Override
-                public void onMultiItemSelected(String[] items) {
-                    textview1.setText("");
+			bottom.setItemListener(new Pickerly.multiSelectListener() {
+			   @Override
+			   public void onMultiItemSelected(String[] items) {
+				   textview1.setText("");
                     for (String item : items) {
                         textview1.setText(textview1.getText().toString() + "\n\n" + ". " + item);
                     }
-                }
+			   }
+
             });
         });
     }
