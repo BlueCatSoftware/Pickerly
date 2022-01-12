@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Pickerly</string>
     <string name="storage_permission_not_available">Please allow storage permission to continue.</string>
-	<string name="camera_permission_not_available">Please allow camera permission to continue.</string>
+    <string name="camera_permission_not_available">Please allow camera permission to continue.</string>
     <string name="all_images">All Images</string>
 </resources>
