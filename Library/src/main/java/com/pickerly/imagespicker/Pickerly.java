@@ -57,7 +57,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pickerly.imagespicker.Adapter.PickerlyAdapter;
 import com.pickerly.imagespicker.Tools.Utility;
-import com.pickerly.sample.R;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
