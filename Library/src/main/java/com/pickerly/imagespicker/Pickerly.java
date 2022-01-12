@@ -1,9 +1,15 @@
 package com.pickerly.imagespicker;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Environment;
 import android.view.MotionEvent;
 import static android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
 import static android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.core.content.FileProvider;
 import static com.pickerly.imagespicker.Tools.Utility.rippleRoundStroke;
 import static com.pickerly.imagespicker.Tools.Utility.setViewRadius;
 import static com.pickerly.imagespicker.Tools.Utility.showSnackbar;
@@ -51,9 +57,13 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pickerly.imagespicker.Adapter.PickerlyAdapter;
 import com.pickerly.imagespicker.Tools.Utility;
+import com.pickerly.sample.R;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -81,6 +91,8 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
     private boolean MULTI_SELECT;
     private String[] MULTI_PATHS = new String[]{};
     private ArrayList<String> bucketList = new ArrayList<>();
+	private Intent cam = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+	private File cam_dir;
 
     @NonNull
     @Override
@@ -116,16 +128,17 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
     public void initializeListeners() {
         adapter.setPicListener(new PickerlyAdapter.PicListener() {
             @Override
-            public void onPicSelected(String path) {
-                if (!MULTI_SELECT) {
+            public void onPicSelected(String path, int position) {
+				if (position == 0 && !MULTI_SELECT){
+					initializeCam();
+				} else if (!MULTI_SELECT) {
                     listener.onItemSelected(path);
                     dismiss();
                 }
             }
 
             @Override
-            public void onMultiplePicSelected(String[] paths) {
-                if (MULTI_SELECT) {
+            public void onMultiplePicSelected(String[] paths, int position) {
                     MULTI_PATHS = paths;
                     if (paths.length <= 0) {
                         confirm_selection_holder.setVisibility(View.GONE);
@@ -133,7 +146,6 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
                     } else {
                         confirm_selection_holder.setVisibility(View.VISIBLE);
                     }
-                }
             }
         });
         confirm_selection_holder.setOnClickListener(arg0 -> {
@@ -144,7 +156,7 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
         });
 
         album_bg.setOnClickListener(arg0 -> showDropDown());
-	spinner.setOnTouchListener(new View.OnTouchListener() {
+		spinner.setOnTouchListener(new View.OnTouchListener() {
           @Override
            public boolean onTouch(View v, MotionEvent event) {
               if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -163,6 +175,18 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
             layoutParams.height = BOTTOMSHEETHEIGHT * 3;
             requireView().setLayoutParams(layoutParams);
         }
+		
+		Uri uri_cam;
+		try{
+		cam_dir = createNewPictureFile(requireActivity());
+		} catch (Exception e){}
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+			uri_cam = FileProvider.getUriForFile(requireActivity(), requireActivity().getPackageName() + ".provider", cam_dir);
+		} else {
+			uri_cam = Uri.fromFile(cam_dir);
+		}
+		cam.putExtra(MediaStore.EXTRA_OUTPUT, uri_cam);
+		cam.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
  
         numberOfColumns = Utility.calculateNoOfColumns(requireContext(), 100);
         gridView.addItemDecoration(new Utility.ImagesPickerItemDecoration(7, numberOfColumns));
@@ -205,6 +229,22 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
     public void requestPermission() {
         requestStoragePermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
     }
+	
+	public boolean isCameraGranted(){
+		return ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED;
+	}
+	
+	public void requestCameraPermission(){
+		requestCameraPermission.launch(Manifest.permission.CAMERA);
+	}
+	
+	private void initializeCam(){
+		if(isCameraGranted()){
+			cameraActivityResultLauncher.launch(cam);
+		} else {
+			requestCameraPermission();
+		}
+	}
 
     private final ActivityResultLauncher<String> requestStoragePermission = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), result -> {
@@ -216,7 +256,35 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
                     dismiss();
                 }
             });
+	
+	private final ActivityResultLauncher<String> requestCameraPermission =
+    registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+        if (isGranted) {
+		   results();
+        } else {
+           showSnackbar(getString(R.string.camera_permission_not_available), requireActivity());
+        }
+    });
+	
+	public void results(){
+		cameraActivityResultLauncher.launch(cam);
+	}
+	
+	public ActivityResultLauncher<Intent> cameraActivityResultLauncher = registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+        new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+		      if(!MULTI_SELECT){
+                      listener.onItemSelected(cam_dir.getAbsolutePath());
+	                  dismiss();
+		      }
+                }
+            }
+        });
 
+   
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -342,12 +410,12 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
             executor.execute(() -> {
                 ArrayList<String> content = getAllShownImagesPath();
                 handler.post(() -> {
-					Collections.reverse(content);
-					contentUri.clear();
-					for(String path : content){
-						contentUri.add(path);
-					}
-					adapter.notifyDataSetChanged();
+		Collections.reverse(content);
+	        contentUri.clear();
+		for(String path : content){
+		   contentUri.add(path);
+		}
+	        adapter.notifyDataSetChanged();
                     if (MULTI_SELECT) {
                         if (MULTI_PATHS.length == 0) {
                             confirm_selection_holder.setVisibility(View.GONE);
@@ -449,5 +517,11 @@ public class Pickerly extends BottomSheetDialogFragment implements OnItemClickLi
 
     public interface multiSelectListener {
         void onMultiItemSelected(String[] items);
+    }
+	
+	private File createNewPictureFile(Context context) {
+        SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String fileName = date.format(new Date()) + ".jpg";
+        return new File(context.getExternalFilesDir(Environment.DIRECTORY_DCIM).getAbsolutePath() + File.separator + fileName);
     }
 }
