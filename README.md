@@ -37,6 +37,18 @@ Version: [![](https://jitpack.io/v/BlueCatSoftware/Pickerly.svg)](https://jitpac
 - Androidx
 - Glide Library
 - For Android 10 add `android:requestLegacyExternalStorage = "true"`
+- In your app `AndroidManifest.xml` add this code below to `<application/>` tag make sure you change the package name and add .provider
+```
+<provider
+android:authorities="your.package.name.provider"
+android:name="androidx.core.content.FileProvider"
+android:exported="false"
+android:grantUriPermissions="true">
+  <meta-data
+    android:name="android.support.FILE_PROVIDER_PATHS"
+    android:resource="@xml/provider_paths" />  
+</provider>
+```
 
 ## Usage
 
